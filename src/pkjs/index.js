@@ -1,15 +1,21 @@
-var CONFIG_URL = 'https://paul-em.github.io/pebble-fetch/';
+var CONFIG = 'https://paul-em.github.io/pebble-fetch/';
 
 var METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH'];
+
+// 6 request slots: 0=Up, 1=Select, 2=Down (short press)
+//                  3=Up-Hold, 4=Select-Hold, 5=Down-Hold (long press)
+var NUM_SLOTS = 6;
 
 function getRequests() {
   var raw = localStorage.getItem('requests');
   if (raw) {
     try {
       return JSON.parse(raw);
-    } catch (e) {}
+    } catch (e) { }
   }
-  return [null, null, null];
+  var empty = [];
+  for (var i = 0; i < NUM_SLOTS; i++) empty.push(null);
+  return empty;
 }
 
 function hasStoredRequests() {
@@ -23,7 +29,7 @@ function hasStoredRequests() {
 function sendRequestNames() {
   var requests = getRequests();
   var msg = {};
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < NUM_SLOTS; i++) {
     var key = 'RequestName' + i;
     msg[key] = requests[i] && requests[i].name ? requests[i].name : '';
   }
@@ -36,6 +42,14 @@ function sendConfigToWatch(requests) {
 }
 
 function executeRequest(index) {
+  if (index < 0 || index >= NUM_SLOTS) {
+    Pebble.sendAppMessage({
+      ResponseSuccess: 0,
+      ResponseStatus: 0
+    });
+    return;
+  }
+
   var requests = getRequests();
   var config = requests[index];
 
@@ -130,7 +144,7 @@ Pebble.addEventListener('appmessage', function (e) {
 
 Pebble.addEventListener('showConfiguration', function () {
   var currentSettings = { requests: getRequests() };
-  var url = CONFIG_URL + '#' + encodeURIComponent(JSON.stringify(currentSettings));
+  var url = CONFIG + '#' + encodeURIComponent(JSON.stringify(currentSettings));
   Pebble.openURL(url);
 });
 

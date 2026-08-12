@@ -91,6 +91,24 @@
       color: #e65100;
     }
 
+    .badge.up-hold {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1.5px dashed #1565c0;
+    }
+
+    .badge.select-hold {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1.5px dashed #2e7d32;
+    }
+
+    .badge.down-hold {
+      background: #fff3e0;
+      color: #e65100;
+      border: 1.5px dashed #e65100;
+    }
+
     .card-body {
       display: none;
     }
@@ -271,7 +289,10 @@
     var BUTTONS = [
       { name: 'Up', cssClass: 'up' },
       { name: 'Select', cssClass: 'select' },
-      { name: 'Down', cssClass: 'down' }
+      { name: 'Down', cssClass: 'down' },
+      { name: 'Up-Hold', cssClass: 'up-hold' },
+      { name: 'Select-Hold', cssClass: 'select-hold' },
+      { name: 'Down-Hold', cssClass: 'down-hold' }
     ];
     var METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
     var METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH'];
@@ -285,8 +306,8 @@
       }
     }
 
-    var requests = (options.requests || [null, null, null]).slice(0, 3);
-    while (requests.length < 3) requests.push(null);
+    var requests = (options.requests || []).slice(0, 6);
+    while (requests.length < 6) requests.push(null);
 
     var app = document.getElementById('app');
 
@@ -318,7 +339,7 @@
       container.appendChild(row);
     }
 
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 6; i++) {
       (function (index) {
         var req = requests[index] || {};
         var btn = BUTTONS[index];
@@ -438,7 +459,7 @@
 
     function collectData() {
       var result = [];
-      for (var i = 0; i < 3; i++) {
+      for (var i = 0; i < 6; i++) {
         var name = document.getElementById('name-' + i).value.trim();
         var url = document.getElementById('url-' + i).value.trim();
         var method = document.getElementById('method-' + i).value;

@@ -1,6 +1,4 @@
-# pebble-fetchy (Fetch)
-
-A Pebble watch app to quickly send preconfigured HTTP requests directly from the watch. The three physical buttons **UP**, **OK** and **DOWN** each trigger a request you set up in advance.
+A Pebble watch app to quickly send preconfigured HTTP requests directly from the watch. The three physical buttons **UP**, **OK** and **DOWN** each trigger a request you set up in advance — either with a **short press** or a **long press**.
 
 > Requires a paired Pebble app (Android/iOS), or the official [Repebble](https://developer.repebble.com) development stack for emulator and installation.
 
@@ -8,7 +6,7 @@ A Pebble watch app to quickly send preconfigured HTTP requests directly from the
 
 ## Features
 
-- **3 configurable requests** — one per button (UP / OK / DOWN).
+- **6 configurable requests** — two per button: a **short press** (UP / OK / DOWN) and a **long press** (UP-Hold / OK-Hold / DOWN-Hold).
 - **HTTP methods**: `GET`, `POST`, `PUT`, `PATCH`, and more (with optional body for the latter).
 - **Custom headers** per request.
 - **On-watch status feedback**: success (`OK (200)`) or failure (`Failed (4xx)`, timeout `408`) with haptic feedback.
@@ -76,7 +74,7 @@ After a successful build the app is available at `build/pebble-fetchy.pbw`.
 
 ## Configuration
 
-Requests are configured via the **configuration web page**, opened from within the Pebble app (in the app's settings). You can set a name, URL, method, headers and body for each of the three buttons.
+Requests are configured via the **configuration web page**, opened from within the Pebble app (in the app's settings). You can set a name, URL, method, headers and body for each of the **six** button actions — one per short press (**Up**, **Select**, **Down**) and one per long press (**Up-Hold**, **Select-Hold**, **Down-Hold**). A long press (holding the button for about 0.6&nbsp;s) triggers the corresponding *Hold* request.
 
 - The configuration is kept in the JS side's `localStorage` and additionally backed up to the watch's persistent storage.
 - On startup the app checks whether local configuration exists; if not, it requests the backup from the watch.

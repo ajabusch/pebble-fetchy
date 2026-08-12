@@ -7,17 +7,21 @@
 #define PERSIST_CHUNK_SIZE 256
 #define PERSIST_NAME_BASE_KEY 200
 
+// 6 request slots: 0=Up, 1=Select, 2=Down (short press)
+//                  3=Up-Hold, 4=Select-Hold, 5=Down-Hold (long press)
+#define NUM_SLOTS 6
+
 static Window *s_window;
 static TextLayer *s_title_layer;
-static TextLayer *s_up_layer;
-static TextLayer *s_select_layer;
-static TextLayer *s_down_layer;
+static TextLayer *s_slot_layers[NUM_SLOTS];
 static TextLayer *s_status_layer;
 
-static char s_up_text[64] = "UP1: (not set)";
-static char s_select_text[64] = "OK: (not set)";
-static char s_down_text[64] = "DN: (not set)";
+static char s_slot_texts[NUM_SLOTS][64];
 static char s_status_text[64] = "";
+
+static const char *s_slot_prefixes[NUM_SLOTS] = {
+    "UP: ", "OK: ", "DN: ",
+    "UP-H: ", "OK-H: ", "DN-H: "};
 
 static void save_config_to_persist(const char *json)
 {
@@ -68,7 +72,7 @@ static void send_button_press(int index)
   dict_write_int32(iter, MESSAGE_KEY_ButtonIndex, index);
   app_message_outbox_send();
 
-  snprintf(s_status_text, sizeof(s_status_text), "Sending...");
+  snprintf(s_status_text, sizeof(s_status_text), "Sending %d...", index);
   text_layer_set_text(s_status_layer, s_status_text);
 }
 
@@ -87,39 +91,40 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context)
   send_button_press(2);
 }
 
+static void up_long_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+  send_button_press(3);
+}
+
+static void select_long_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+  send_button_press(4);
+}
+
+static void down_long_click_handler(ClickRecognizerRef recognizer, void *context)
+{
+  send_button_press(5);
+}
+
 static void click_config_provider(void *context)
 {
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+
+  window_long_click_subscribe(BUTTON_ID_UP, 600, up_long_click_handler, NULL);
+  window_long_click_subscribe(BUTTON_ID_SELECT, 600, select_long_click_handler, NULL);
+  window_long_click_subscribe(BUTTON_ID_DOWN, 600, down_long_click_handler, NULL);
 }
 
 static void update_request_name(int index, const char *name)
 {
-  char *buf;
-  TextLayer *layer;
-  const char *prefix;
-
-  switch (index)
-  {
-  case 0:
-    buf = s_up_text;
-    layer = s_up_layer;
-    prefix = "UP: ";
-    break;
-  case 1:
-    buf = s_select_text;
-    layer = s_select_layer;
-    prefix = "OK: ";
-    break;
-  case 2:
-    buf = s_down_text;
-    layer = s_down_layer;
-    prefix = "DN: ";
-    break;
-  default:
+  if (index < 0 || index >= NUM_SLOTS)
     return;
-  }
+
+  char *buf = s_slot_texts[index];
+  TextLayer *layer = s_slot_layers[index];
+  const char *prefix = s_slot_prefixes[index];
 
   if (name && strlen(name) > 0)
   {
@@ -129,23 +134,19 @@ static void update_request_name(int index, const char *name)
   {
     snprintf(buf, 64, "%s(not set)", prefix);
   }
-  text_layer_set_text(layer, buf);
+  if (layer)
+    text_layer_set_text(layer, buf);
 }
 
 static void load_persisted_names(void)
 {
-  const char *prefixes[] = {"UP: ", "OK: ", "DN: "};
-  char *bufs[] = {s_up_text, s_select_text, s_down_text};
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < NUM_SLOTS; i++)
   {
     if (persist_exists(PERSIST_NAME_BASE_KEY + i))
     {
       char name[64];
       persist_read_string(PERSIST_NAME_BASE_KEY + i, name, sizeof(name));
-      if (strlen(name) > 0)
-      {
-        snprintf(bufs[i], 64, "%s%s", prefixes[i], name);
-      }
+      update_request_name(i, name);
     }
   }
 }
@@ -153,25 +154,14 @@ static void load_persisted_names(void)
 static void inbox_received_handler(DictionaryIterator *iter, void *context)
 {
   // Handle request names from phone — also persist them on the watch
-  Tuple *name0 = dict_find(iter, MESSAGE_KEY_RequestName0);
-  if (name0)
+  for (int i = 0; i < NUM_SLOTS; i++)
   {
-    update_request_name(0, name0->value->cstring);
-    persist_write_string(PERSIST_NAME_BASE_KEY + 0, name0->value->cstring);
-  }
-
-  Tuple *name1 = dict_find(iter, MESSAGE_KEY_RequestName1);
-  if (name1)
-  {
-    update_request_name(1, name1->value->cstring);
-    persist_write_string(PERSIST_NAME_BASE_KEY + 1, name1->value->cstring);
-  }
-
-  Tuple *name2 = dict_find(iter, MESSAGE_KEY_RequestName2);
-  if (name2)
-  {
-    update_request_name(2, name2->value->cstring);
-    persist_write_string(PERSIST_NAME_BASE_KEY + 2, name2->value->cstring);
+    Tuple *name = dict_find(iter, MESSAGE_KEY_RequestName0 + i);
+    if (name)
+    {
+      update_request_name(i, name->value->cstring);
+      persist_write_string(PERSIST_NAME_BASE_KEY + i, name->value->cstring);
+    }
   }
 
   // Handle config backup from phone
@@ -245,34 +235,29 @@ static void window_load(Window *window)
   int w = bounds.size.w;
 
   GFont title_font = fonts_get_system_font(FONT_KEY_GOTHIC_24);
-  GFont body_font = fonts_get_system_font(FONT_KEY_GOTHIC_28);
-  GFont status_font = fonts_get_system_font(FONT_KEY_GOTHIC_24);
+  GFont body_font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+  GFont status_font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
 
-  int y_start = PBL_IF_ROUND_ELSE(16, 4);
-  int row_h = 42;
-  int pad = PBL_IF_ROUND_ELSE(44, 24);
+  int y_start = PBL_IF_ROUND_ELSE(12, 2);
+  int row_h = PBL_IF_ROUND_ELSE(26, 28);
+  int pad = PBL_IF_ROUND_ELSE(32, 12);
 
   // Title
-  s_title_layer = create_text_layer(GRect(0, y_start, w, 36), title_font, GTextAlignmentCenter);
+  s_title_layer = create_text_layer(GRect(0, y_start, w, 28), title_font, GTextAlignmentCenter);
   text_layer_set_text(s_title_layer, "fetchy");
   layer_add_child(root, text_layer_get_layer(s_title_layer));
 
   // Request rows
-  int row_y = y_start + 44;
-  s_up_layer = create_text_layer(GRect(pad, row_y, w - pad * 2, row_h), body_font, GTextAlignmentLeft);
-  text_layer_set_text(s_up_layer, s_up_text);
-  layer_add_child(root, text_layer_get_layer(s_up_layer));
-
-  s_select_layer = create_text_layer(GRect(pad, row_y + row_h, w - pad * 2, row_h), body_font, GTextAlignmentLeft);
-  text_layer_set_text(s_select_layer, s_select_text);
-  layer_add_child(root, text_layer_get_layer(s_select_layer));
-
-  s_down_layer = create_text_layer(GRect(pad, row_y + row_h * 2, w - pad * 2, row_h), body_font, GTextAlignmentLeft);
-  text_layer_set_text(s_down_layer, s_down_text);
-  layer_add_child(root, text_layer_get_layer(s_down_layer));
+  int row_y = y_start + 28;
+  for (int i = 0; i < NUM_SLOTS; i++)
+  {
+    s_slot_layers[i] = create_text_layer(GRect(pad, row_y + row_h * i, w - pad * 2, row_h), body_font, GTextAlignmentLeft);
+    text_layer_set_text(s_slot_layers[i], s_slot_texts[i]);
+    layer_add_child(root, text_layer_get_layer(s_slot_layers[i]));
+  }
 
   // Status bar
-  s_status_layer = create_text_layer(GRect(pad, row_y + row_h * 3 + 4, w - pad * 2, 26), status_font, GTextAlignmentCenter);
+  s_status_layer = create_text_layer(GRect(pad, row_y + row_h * NUM_SLOTS + 2, w - pad * 2, 22), status_font, GTextAlignmentCenter);
   text_layer_set_text(s_status_layer, s_status_text);
   layer_add_child(root, text_layer_get_layer(s_status_layer));
 }
@@ -280,9 +265,10 @@ static void window_load(Window *window)
 static void window_unload(Window *window)
 {
   text_layer_destroy(s_title_layer);
-  text_layer_destroy(s_up_layer);
-  text_layer_destroy(s_select_layer);
-  text_layer_destroy(s_down_layer);
+  for (int i = 0; i < NUM_SLOTS; i++)
+  {
+    text_layer_destroy(s_slot_layers[i]);
+  }
   text_layer_destroy(s_status_layer);
 }
 
