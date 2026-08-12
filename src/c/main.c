@@ -234,21 +234,23 @@ static void window_load(Window *window)
   GRect bounds = layer_get_bounds(root);
   int w = bounds.size.w;
 
-  GFont title_font = fonts_get_system_font(FONT_KEY_GOTHIC_24);
-  GFont body_font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
-  GFont status_font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+  // Title: as small as possible
+  GFont title_font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
+  // Request rows: bigger, bolder, wider
+  GFont body_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
+  GFont status_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
-  int y_start = PBL_IF_ROUND_ELSE(12, 2);
-  int row_h = PBL_IF_ROUND_ELSE(26, 28);
-  int pad = PBL_IF_ROUND_ELSE(32, 12);
+  int y_start = 2;
+  int row_h = PBL_IF_ROUND_ELSE(30, 30);
+  int pad = PBL_IF_ROUND_ELSE(20, 8);
 
   // Title
-  s_title_layer = create_text_layer(GRect(0, y_start, w, 28), title_font, GTextAlignmentCenter);
+  s_title_layer = create_text_layer(GRect(0, y_start, w, 18), title_font, GTextAlignmentCenter);
   text_layer_set_text(s_title_layer, "fetchy");
   layer_add_child(root, text_layer_get_layer(s_title_layer));
 
   // Request rows
-  int row_y = y_start + 28;
+  int row_y = y_start + 16;
   for (int i = 0; i < NUM_SLOTS; i++)
   {
     s_slot_layers[i] = create_text_layer(GRect(pad, row_y + row_h * i, w - pad * 2, row_h), body_font, GTextAlignmentLeft);
