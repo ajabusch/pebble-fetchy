@@ -1,3 +1,5 @@
+# pebble-fetchy (Fetchy)
+
 A Pebble watch app to quickly send preconfigured HTTP requests directly from the watch. The three physical buttons **UP**, **OK** and **DOWN** each trigger a request you set up in advance — either with a **short press** or a **long press**.
 
 > Requires a paired Pebble app (Android/iOS), or the official [Repebble](https://developer.repebble.com) development stack for emulator and installation.

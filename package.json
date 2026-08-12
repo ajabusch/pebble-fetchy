@@ -1,11 +1,11 @@
 {
-  "name": "pebble-fetch",
+  "name": "pebble-fetchy",
   "version": "1.1.0",
   "description": "Pebble watch app to quickly send preconfigured HTTP requests",
   "author": "Paul Em",
   "license": "MIT",
   "pebble": {
-    "displayName": "Fetch",
+    "displayName": "Fetchy",
     "uuid": "65d17f96-032d-4dc3-a5ca-7999e1adcc20",
     "sdkVersion": "3",
     "enableMultiJS": true,

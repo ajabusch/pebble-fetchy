@@ -1,4 +1,4 @@
-var CONFIG = 'https://paul-em.github.io/pebble-fetch/';
+var CONFIG = 'https://github.com/ajabusch/pebble-fetchy/';
 
 var METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH'];
 
