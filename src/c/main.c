@@ -222,7 +222,7 @@ static TextLayer *create_text_layer(GRect bounds, GFont font, GTextAlignment ali
 {
   TextLayer *layer = text_layer_create(bounds);
   text_layer_set_background_color(layer, GColorClear);
-  text_layer_set_text_color(layer, GColorWhite);
+  text_layer_set_text_color(layer, GColorBlack);
   text_layer_set_font(layer, font);
   text_layer_set_text_alignment(layer, align);
   return layer;
@@ -285,7 +285,7 @@ static void init(void)
 
   // Create window
   s_window = window_create();
-  window_set_background_color(s_window, GColorBlack);
+  window_set_background_color(s_window, GColorWhite);
   window_set_click_config_provider(s_window, click_config_provider);
   window_set_window_handlers(s_window, (WindowHandlers){
                                            .load = window_load,
