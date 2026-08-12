@@ -283,6 +283,15 @@ static void init(void)
   // Load persisted request names so they show immediately
   load_persisted_names();
 
+  // Initialize default labels for any slots without a persisted name
+  for (int i = 0; i < NUM_SLOTS; i++)
+  {
+    if (strlen(s_slot_texts[i]) == 0)
+    {
+      snprintf(s_slot_texts[i], 64, "%s(not set)", s_slot_prefixes[i]);
+    }
+  }
+
   // Create window
   s_window = window_create();
   window_set_background_color(s_window, GColorWhite);
