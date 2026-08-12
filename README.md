@@ -124,6 +124,30 @@ The emulator command uses the same names (`--emulator emery`, `basalt`, …).
 
 ---
 
+## Publishing to the store
+
+If the version installed **from the store** fails (e.g. `Watchapp failed to load`) while the same code works when installed via CloudPebble/`pebble install`, the store is almost certainly serving a **stale or corrupt `.pbw`**. The store does **not** rebuild from source — it serves exactly the file you uploaded.
+
+To publish a working release:
+
+1. Bump the version in [`package.json`](package.json) (the store requires the `versionLabel` to increase).
+2. Build a fresh bundle:
+   ```sh
+   pebble build
+   ```
+   The result is `build/pebble-fetchy.pbw`.
+3. Verify the bundle contains the expected payload **before** uploading:
+   ```sh
+   unzip -p build/pebble-fetchy.pbw appinfo.json | grep -E "versionLabel|longName"
+   unzip -p build/pebble-fetchy.pbw pebble-js-app.js | grep -oE "NUM_SLOTS = [0-9]|https://[^']*github[^']*"
+   ```
+   - `versionLabel` must be the new version (e.g. `2.0.4`).
+   - `NUM_SLOTS = 6` and the config URL `https://ajabusch.github.io/pebble-fetchy/` must be present.
+4. Upload this exact `build/pebble-fetchy.pbw` as a **new release** in the store. A plain re-upload of an old file will not fix the issue.
+5. After installing from the store, verify the config page opens at `https://ajabusch.github.io/pebble-fetchy/` (the 6-slot settings).
+
+---
+
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
