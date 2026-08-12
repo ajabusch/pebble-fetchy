@@ -2,6 +2,17 @@
 
 A Pebble watch app to quickly send preconfigured HTTP requests directly from the watch. The three physical buttons **UP**, **OK** and **DOWN** each trigger a request you set up in advance — either with a **short press** or a **long press**.
 
+## Icon & Banner
+
+| Asset | Source | Size | Used for |
+|-------|--------|------|----------|
+| [`resources/images/app_icon.png`](resources/images/app_icon.png) | `img/Icon-144.jpg` | 25×25 | Watch app menu icon (`IMAGE_MENU_ICON`) |
+| [`img/Icon-80.jpg`](img/Icon-80.jpg) | – | 80×80 | App icon (smaller platform) |
+| [`img/Icon-144.jpg`](img/Icon-144.jpg) | – | 144×144 | App icon (higher resolution) |
+| [`img/banner.jpg`](img/banner.jpg) | – | 720×320 | Store / web banner |
+
+The 25×25 menu icon is bundled into the `.pbw` via [`package.json`](package.json) (`resources.media`). The larger `img/` files are used when submitting the app to the store / publishing.
+
 > Requires a paired Pebble app (Android/iOS), or the official [Repebble](https://developer.repebble.com) development stack for emulator and installation.
 
 ---
@@ -40,17 +51,22 @@ The required toolchain is usually shipped with the SDK; `arm-none-eabi-gcc` and 
 
 ```
 ├── src/
-│   ├── c/           # Pebble C watch app code (main.c)
+│   ├── c/           # Pebble C watch application code (main.c)
 │   └── pkjs/        # PebbleKit JavaScript (index.js) — HTTP requests, configuration
-├── wscript          # Waf build script (SDK)
+├── resources/
+│   └── images/      # Bundled watch resources (app menu icon)
+├── img/             # Store assets (icons + banner)
+├── wscript          # Platform Action build script (SDK)
 ├── package.json     # Project metadata & Pebble configuration (SDK 3)
 └── build/           # Build output (pebble-fetchy.pbw)
 ```
 
 | File | Purpose |
 |------|---------|
-| [`src/c/main.c`](src/c/main.c) | Watch app: button handling, status display, persistent config storage |
+| [`src/c/main.c`](src/c/main.c) | Watch app: button handling, Press handling, status display, persistent config storage |
 | [`src/pkjs/index.js`](src/pkjs/index.js) | Phone/JS side: XHR requests, config webview, local storage & backup |
+| [`resources/images/app_icon.png`](resources/images/app_icon.png) | 25×25 watch app menu icon (`IMAGE_MENU_ICON`) |
+| [`img/`](img/) | Store icons (`Icon-80.jpg`, `Icon-144.jpg`) and banner (`banner.jpg`) |
 | [`wscript`](wscript) | Waf build rules |
 | [`package.json`](package.json) | App metadata, UUID, targets, message keys |
 

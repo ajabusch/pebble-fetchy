@@ -36,7 +36,21 @@
       "RequestBackup"
     ],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "png",
+          "name": "IMAGE_MENU_ICON",
+          "file": "images/app_icon.png",
+          "menuIcon": true,
+          "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "emery"
+          ]
+        }
+      ]
     }
   },
   "scripts": {
