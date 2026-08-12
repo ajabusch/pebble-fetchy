@@ -6,6 +6,11 @@ A Pebble watch app to quickly send preconfigured HTTP requests directly from the
 
 ---
 
+For now this looks best on a new pebble time 2, but it works on other pebbles too.
+Maybe I fix the design for the other watches later on.
+
+---
+
 Props to Paul Em! And thanks to https://greenpt.com/ (EU/DSGVO/ECO/Water saving/privacy optimized) LLM-API as a little helper, I was able to create this App ... my C is a little rusty.
 
 ---

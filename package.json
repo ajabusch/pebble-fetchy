@@ -1,7 +1,7 @@
 {
   "name": "pebble-fetchy",
   "version": "1.1.0",
-  "description": "Pebble watch app to quickly send preconfigured HTTP requests",
+  "description": "Pebble watch app to quickly send preconfigured HTTP requests. Best used with pebble time 2.",
   "author": "Andreas Jabusch",
   "license": "MIT",
   "pebble": {
