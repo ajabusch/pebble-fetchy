@@ -6,6 +6,10 @@ A Pebble watch app to quickly send preconfigured HTTP requests directly from the
 
 ---
 
+Props to Paul Em! And thanks to https://greenpt.com/ (EU/DSGVO/ECO/Water saving/privacy optimized) LLM-API as a little helper, I was able to create this App ... my C is a little rusty.
+
+---
+
 ## Features
 
 - **6 configurable requests** — two per button: a **short press** (UP / OK / DOWN) and a **long press** (UP-Hold / OK-Hold / DOWN-Hold).
