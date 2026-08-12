@@ -65,6 +65,13 @@ pebble logs --emulator emery
 
 After a successful build the app is available at `build/pebble-fetchy.pbw`.
 
+### Emulator - Buttons
+
+- Left Arrow: Back button
+- Up Arrow: Up button
+- Down Arrow: Down button
+- Right Arrow: Select button
+
 ---
 
 ## Configuration

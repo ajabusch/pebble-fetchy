@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,7 @@
     header {
       color: #1d1d1f;
       padding: 28px 16px 10px;
-      font-size: 32px;
+      font-size: 22px;
       font-weight: 900;
       text-align: center;
       letter-spacing: -0.04em;
@@ -59,15 +60,15 @@
     }
 
     .card-header h2 {
-      font-size: 15px;
+      font-size: 21px;
       font-weight: 600;
       color: #1d1d1f;
     }
 
     .badge {
-      font-size: 10px;
+      font-size: 16px;
       font-weight: 700;
-      padding: 3px 0;
+      padding: 4px 0;
       width: 52px;
       text-align: center;
       border-radius: 4px;
@@ -75,9 +76,20 @@
       letter-spacing: 0.04em;
     }
 
-    .badge.up { background: #e3f2fd; color: #1565c0; }
-    .badge.select { background: #e8f5e9; color: #2e7d32; }
-    .badge.down { background: #fff3e0; color: #e65100; }
+    .badge.up {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .badge.select {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .badge.down {
+      background: #fff3e0;
+      color: #e65100;
+    }
 
     .card-body {
       display: none;
@@ -104,7 +116,7 @@
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 16px;
       font-weight: 500;
       color: #86868b;
       margin-bottom: 5px;
@@ -117,10 +129,10 @@
     textarea,
     select {
       width: 100%;
-      padding: 10px 12px;
+      padding: 11px 12px;
       border: 1px solid #e5e5e7;
       border-radius: 10px;
-      font-size: 15px;
+      font-size: 19px;
       font-family: inherit;
       background: #f9f9fb;
       color: #1d1d1f;
@@ -138,7 +150,7 @@
 
     textarea {
       font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 13px;
+      font-size: 17px;
       min-height: 80px;
       resize: vertical;
     }
@@ -221,7 +233,7 @@
       padding: 14px;
       border: none;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 19px;
       font-weight: 600;
       cursor: pointer;
       transition: opacity 0.2s;
@@ -246,6 +258,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>fetch</header>
   <div class="container" id="app"></div>
@@ -317,8 +330,8 @@
         headerDiv.className = 'card-header';
         headerDiv.innerHTML =
           '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<span class="badge ' + btn.cssClass + '">' + btn.name + '</span>' +
-            '<h2 id="card-title-' + index + '">' + (req.name || 'Request ' + (index + 1)) + '</h2>' +
+          '<span class="badge ' + btn.cssClass + '">' + btn.name + '</span>' +
+          '<h2 id="card-title-' + index + '">' + (req.name || 'Request ' + (index + 1)) + '</h2>' +
           '</div>' +
           '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
 
@@ -467,4 +480,5 @@
     });
   </script>
 </body>
+
 </html>
