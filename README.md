@@ -108,5 +108,5 @@ MIT — see [`LICENSE`](LICENSE).
 ## Notes
 
 - The project uses **SDK 3** (`package.json`) and is built with the **Repebble SDK 4.17**.
-- The configuration URL currently points to `https://paul-em.github.io/pebble-fetch/` (see [`src/pkjs/index.js`](src/pkjs/index.js:1)).
+- The configuration URL currently points to `https://ajabusch.github.io/pebble-fetchy/` (see [`src/pkjs/index.js`](src/pkjs/index.js:1)); this is served from the `docs/` folder via GitHub Pages.
 - Communicating between the watch and the phone requires a **paired phone** or a running emulator.
